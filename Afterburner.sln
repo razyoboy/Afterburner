@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Afterburner", "Afterburner\Afterburner.csproj", "{0A819A30-62DB-49AD-AA31-C6B729A76F7D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Afterburner.Tests", "Afterburner.Tests\Afterburner.Tests.csproj", "{69D7E3E0-8A27-4AAF-85B4-0107BFAE86A8}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0A819A30-62DB-49AD-AA31-C6B729A76F7D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0A819A30-62DB-49AD-AA31-C6B729A76F7D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0A819A30-62DB-49AD-AA31-C6B729A76F7D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0A819A30-62DB-49AD-AA31-C6B729A76F7D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{69D7E3E0-8A27-4AAF-85B4-0107BFAE86A8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{69D7E3E0-8A27-4AAF-85B4-0107BFAE86A8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{69D7E3E0-8A27-4AAF-85B4-0107BFAE86A8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{69D7E3E0-8A27-4AAF-85B4-0107BFAE86A8}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
