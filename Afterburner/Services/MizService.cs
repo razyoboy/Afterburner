@@ -14,6 +14,7 @@ public class MizService
     /// </summary>
     /// <param name="inputMizPath">Path to the source .miz file.</param>
     /// <param name="outputMizPath">Path to write the modified .miz file.</param>
+    /// <param name="cancellationToken">Cancellation token</param>
     public async Task EnableUnlimitedFuel(string inputMizPath, string outputMizPath, CancellationToken cancellationToken = default)
     {
         await using var fsIn = File.OpenRead(inputMizPath);
