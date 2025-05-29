@@ -15,25 +15,34 @@ public class MizServiceTests(ITestOutputHelper output)
         const string inputMizPath = "Data/liberation_nextturn.miz";
         const string outputMizPath = "Data/modified.miz";
 
-        // Act
-        await _mizService.EnableUnlimitedFuel(inputMizPath, outputMizPath);
-
-        // Assert
-        using var zip = new ZipFile(outputMizPath);
-        var optionsEntry = zip.GetEntry("options.lua");
-        Assert.NotNull(optionsEntry);
-
-        await using var stream = zip.GetInputStream(optionsEntry);
-        using var reader = new StreamReader(stream, Encoding.UTF8);
-        var content = await reader.ReadToEndAsync();
-        output.WriteLine(content);
-
-        Assert.Contains("[\"fuel\"] = true", content);
-
-        // Clean up
-        if (File.Exists(outputMizPath))
+        try
         {
-            File.Delete(outputMizPath);
+            // Act
+            await _mizService.EnableUnlimitedFuel(inputMizPath, outputMizPath);
+
+            // Assert
+            string content;
+            using var zip = new ZipFile(outputMizPath);
+            {
+                var optionsEntry = zip.GetEntry("options");
+                Assert.NotNull(optionsEntry);
+
+                await using var stream = zip.GetInputStream(optionsEntry);
+                using var reader = new StreamReader(stream, Encoding.UTF8);
+                content = await reader.ReadToEndAsync();
+                output.WriteLine(content);
+            }
+
+            Assert.Contains("[\"fuel\"]=true", content);
+
+        }
+        finally
+        {
+            // Clean up
+            if (File.Exists(outputMizPath))
+            {
+                File.Delete(outputMizPath);
+            }
         }
     }
 }

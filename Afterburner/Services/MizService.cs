@@ -42,7 +42,7 @@ public class MizService
                 // voo-doo magic
                 var patched = Regex.Replace(text,
                     @"\[""fuel""\]\s*=\s*\w+",
-                    "[\"fuel\"] = true");
+                    "[\"fuel\"]=true");
 
                 var newEntry = new ZipEntry(entry.Name)
                 {
@@ -58,8 +58,9 @@ public class MizService
             }
             else
             {
-                var newEntry = new ZipEntry(entry)
+                var newEntry = new ZipEntry(entry.Name)
                 {
+                    DateTime = entry.DateTime,
                     CompressionMethod = CompressionMethod.Deflated,
                     HostSystem = entry.HostSystem
                 };
@@ -68,7 +69,7 @@ public class MizService
             }
 
             await zipOut.CloseEntryAsync(cancellationToken);
-            await zipOut.FinishAsync(cancellationToken);
         }
+        await zipOut.FinishAsync(cancellationToken);
     }
 }
