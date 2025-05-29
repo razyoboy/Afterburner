@@ -6,8 +6,6 @@ namespace Afterburner.Tests.Services;
 
 public class MizServiceTests(ITestOutputHelper output)
 {
-    private readonly MizService _mizService = new MizService();
-
     [Fact]
     public async Task EnableUnlimitedFuel_ShouldModifyOptionsLua()
     {
@@ -18,13 +16,13 @@ public class MizServiceTests(ITestOutputHelper output)
         try
         {
             // Act
-            await _mizService.EnableUnlimitedFuel(inputMizPath, outputMizPath);
+            await MizService.EnableUnlimitedFuel(inputMizPath, outputMizPath);
 
             // Assert
             string content;
             using var zip = new ZipFile(outputMizPath);
             {
-                var optionsEntry = zip.GetEntry("options");
+                var optionsEntry = zip.GetEntry("mission");
                 Assert.NotNull(optionsEntry);
 
                 await using var stream = zip.GetInputStream(optionsEntry);
@@ -33,8 +31,7 @@ public class MizServiceTests(ITestOutputHelper output)
                 output.WriteLine(content);
             }
 
-            Assert.Contains("[\"fuel\"]=true", content);
-
+            Assert.Contains("[\"fuel\"] = true", content);
         }
         finally
         {

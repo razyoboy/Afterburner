@@ -5,7 +5,7 @@ using ICSharpCode.SharpZipLib.Zip;
 using ICSharpCode.SharpZipLib.Zip.Compression;
 namespace Afterburner.Services;
 
-public class MizService
+public static class MizService
 {
     /// <summary>
     /// Enables unlimited fuel by setting ["fuel"] = true in the options.lua inside the .miz archive.
@@ -15,7 +15,7 @@ public class MizService
     /// <param name="inputMizPath">Path to the source .miz file.</param>
     /// <param name="outputMizPath">Path to write the modified .miz file.</param>
     /// <param name="cancellationToken">Cancellation token</param>
-    public async Task EnableUnlimitedFuel(string inputMizPath, string outputMizPath, CancellationToken cancellationToken = default)
+    public static async Task EnableUnlimitedFuel(string inputMizPath, string outputMizPath, CancellationToken cancellationToken = default)
     {
         await using var fsIn = File.OpenRead(inputMizPath);
         await using var fsOut = File.Create(outputMizPath);
@@ -35,14 +35,42 @@ public class MizService
             }
 
             await using var entryStream = zipIn.GetInputStream(entry);
-            if (entry.Name.EndsWith("options", StringComparison.OrdinalIgnoreCase))
+            if (entry.Name.EndsWith("mission", StringComparison.OrdinalIgnoreCase))
             {
                 var text = await new StreamReader(entryStream, Encoding.UTF8).ReadToEndAsync(cancellationToken);
 
                 // voo-doo magic
                 var patched = Regex.Replace(text,
-                    @"\[""fuel""\]\s*=\s*\w+",
-                    "[\"fuel\"]=true");
+                    @"(\[\s*""forcedOptions""\s*\]\s*=\s*\{\s*)([^}]*)",
+                    match =>
+                    {
+                        var beforeContent = match.Groups[1].Value;
+                        var innerContent = match.Groups[2].Value;
+
+                        if (Regex.IsMatch(innerContent, @"\[\s*""fuel""\s*\]"))
+                        {
+                            // Fuel option exists — replace its value
+                            innerContent = Regex.Replace(innerContent,
+                                @"\[\s*""fuel""\s*\]\s*=\s*\w+",
+                                "[\"fuel\"] = true");
+                        }
+                        else
+                        {
+                            // Inject new fuel option
+                            if (!string.IsNullOrWhiteSpace(innerContent.Trim()))
+                            {
+                                innerContent = $"[\"fuel\"] = true,\n\t\t" + innerContent;
+                            }
+                            else
+                            {
+                                innerContent = "[\"fuel\"] = true,\n\t\t";
+                            }
+                        }
+
+                        return beforeContent + innerContent;
+                    },
+                    RegexOptions.Singleline);
+
 
                 var newEntry = new ZipEntry(entry.Name)
                 {
@@ -71,5 +99,41 @@ public class MizService
             await zipOut.CloseEntryAsync(cancellationToken);
         }
         await zipOut.FinishAsync(cancellationToken);
+    }
+
+    public static async Task EnableUnlimitedFuel(string inputMizPath, CancellationToken cancellationToken = default)
+    {
+        var tempFileName = Path.GetRandomFileName();
+        var tempFilePath = Path.Combine(Path.GetTempPath(), tempFileName);
+        await EnableUnlimitedFuel(inputMizPath, tempFilePath, cancellationToken);
+
+        // replace the original file with the modified one
+        if (File.Exists(inputMizPath))
+        {
+            File.Delete(inputMizPath);
+            File.Move(tempFilePath, inputMizPath);
+        }
+    }
+
+    public static string ResolveMizPath(string? suppliedPath = null)
+    {
+        if (!string.IsNullOrWhiteSpace(suppliedPath))
+        {
+            return ExpandHome(suppliedPath);
+        }
+
+        var userProfilePath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+        return Path.Combine(userProfilePath, "Saved Games", "DCS.dcs_serverrelease", "Missions", "liberation_nextturn.miz");
+    }
+
+    private static string ExpandHome(string path)
+    {
+        if (path.StartsWith('~'))
+        {
+            var home = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+            var rest = path.TrimStart('~', '/').TrimStart('\\');
+            return Path.Combine(home, rest);
+        }
+        return path;
     }
 }
