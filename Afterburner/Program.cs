@@ -1,20 +1,16 @@
-﻿using Afterburner.Services;
+﻿using Afterburner.Commands;
 using Cocona;
 
 namespace Afterburner;
 
-public class Program
+public static class Program
 {
     public static async Task Main(string[] args)
     {
-        await CoconaApp.RunAsync<Program>(args);
-    }
+        var builder = CoconaApp.CreateBuilder();
+        var app = builder.Build();
+        app.AddCommands<FuelCommands>();
 
-    [Command("unlimited-fuel")]
-    public async Task UnlimitedFuel([Option("path")] string? path = null)
-    {
-        var finalPath = MizService.ResolveMizPath(path);
-        await MizService.EnableUnlimitedFuel(finalPath);
-        Console.WriteLine($"Patched {finalPath}");
+        await app.RunAsync();
     }
 }

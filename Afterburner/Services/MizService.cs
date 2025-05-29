@@ -23,7 +23,8 @@ public static class MizService
         using var zipIn = new ZipFile(fsIn);
         await using var zipOut = new ZipOutputStream(fsOut)
         {
-            IsStreamOwner = true
+            IsStreamOwner = true,
+            UseZip64 = UseZip64.Off
         };
         zipOut.SetLevel(Deflater.BEST_SPEED);
 
@@ -52,18 +53,18 @@ public static class MizService
                             // Fuel option exists — replace its value
                             innerContent = Regex.Replace(innerContent,
                                 @"\[\s*""fuel""\s*\]\s*=\s*\w+",
-                                "[\"fuel\"] = true");
+                                "[\"fuel\"]=true");
                         }
                         else
                         {
                             // Inject new fuel option
                             if (!string.IsNullOrWhiteSpace(innerContent.Trim()))
                             {
-                                innerContent = $"[\"fuel\"] = true,\n\t\t" + innerContent;
+                                innerContent = $"[\"fuel\"]=true,\n\t\t" + innerContent;
                             }
                             else
                             {
-                                innerContent = "[\"fuel\"] = true,\n\t\t";
+                                innerContent = "[\"fuel\"]=true,\n\t\t";
                             }
                         }
 
@@ -76,7 +77,8 @@ public static class MizService
                 {
                     DateTime = entry.DateTime,
                     CompressionMethod = CompressionMethod.Deflated,
-                    HostSystem = entry.HostSystem
+                    HostSystem = 0,
+
                 };
 
                 await zipOut.PutNextEntryAsync(newEntry, cancellationToken);
@@ -90,7 +92,7 @@ public static class MizService
                 {
                     DateTime = entry.DateTime,
                     CompressionMethod = CompressionMethod.Deflated,
-                    HostSystem = entry.HostSystem
+                    HostSystem = 0
                 };
                 await zipOut.PutNextEntryAsync(newEntry, cancellationToken);
                 StreamUtils.Copy(entryStream, zipOut, new byte[4096]);

@@ -7,7 +7,7 @@ namespace Afterburner.Tests.Services;
 public class MizServiceTests(ITestOutputHelper output)
 {
     [Fact]
-    public async Task EnableUnlimitedFuel_ShouldModifyOptionsLua()
+    public async Task EnableUnlimitedFuel_ShouldModifyMissionLua()
     {
         // Arrange
         const string inputMizPath = "Data/liberation_nextturn.miz";
@@ -31,7 +31,7 @@ public class MizServiceTests(ITestOutputHelper output)
                 output.WriteLine(content);
             }
 
-            Assert.Contains("[\"fuel\"] = true", content);
+            Assert.Contains("[\"fuel\"]=true", content);
         }
         finally
         {
