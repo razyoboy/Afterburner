@@ -8,7 +8,7 @@ namespace Afterburner.Services;
 public static class MizService
 {
     /// <summary>
-    /// Enables unlimited fuel by setting ["fuel"] = true in the options.lua inside the .miz archive.
+    /// Enables unlimited fuel by setting ["fuel"] = true in the misson.lua inside the .miz archive.
     /// This version reads and writes entirely in-memory (no temp folder), then writes to a specified output path.
     /// Requires ICSharpCode.SharpZipLib (for HostSystem preservation).
     /// </summary>
