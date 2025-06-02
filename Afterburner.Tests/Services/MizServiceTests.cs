@@ -42,4 +42,17 @@ public class MizServiceTests(ITestOutputHelper output)
             }
         }
     }
+
+    [Fact]
+    public async Task EnableUnlimitedFuel_ShouldFail_FileNotFound()
+    {
+        // Arrange
+        const string inputMizPath = "bruh.hello.miz";
+
+        // Act & Assert
+        await Assert.ThrowsAsync<FileNotFoundException>(async () =>
+        {
+            await MizService.EnableUnlimitedFuel(inputMizPath, Path.GetRandomFileName());
+        });
+    }
 }

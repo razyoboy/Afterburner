@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using System.Text.RegularExpressions;
+using Afterburner.Utils;
 using ICSharpCode.SharpZipLib.Core;
 using ICSharpCode.SharpZipLib.Zip;
 using ICSharpCode.SharpZipLib.Zip.Compression;
@@ -17,15 +18,16 @@ public static class MizService
     /// <param name="cancellationToken">Cancellation token</param>
     public static async Task EnableUnlimitedFuel(string inputMizPath, string outputMizPath, CancellationToken cancellationToken = default)
     {
+        // validate input paths
+        FileUtils.FileExistsOrThrow(inputMizPath);
+
         await using var fsIn = File.OpenRead(inputMizPath);
         await using var fsOut = File.Create(outputMizPath);
 
         using var zipIn = new ZipFile(fsIn);
-        await using var zipOut = new ZipOutputStream(fsOut)
-        {
-            IsStreamOwner = true,
-            UseZip64 = UseZip64.Off
-        };
+        await using var zipOut = new ZipOutputStream(fsOut);
+        zipOut.IsStreamOwner = true;
+        zipOut.UseZip64 = UseZip64.Off;
         zipOut.SetLevel(Deflater.BEST_SPEED);
 
         foreach (ZipEntry entry in zipIn)

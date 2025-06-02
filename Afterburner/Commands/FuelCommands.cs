@@ -10,8 +10,8 @@ public class FuelCommands
         [Option("p", Description = "Path to the .miz file. If not provided, uses the default DCS Server path.")]
         string? path = null)
     {
-        var finalPath = MizService.ResolveMizPath(path);
-        await MizService.EnableUnlimitedFuel(finalPath);
-        Console.WriteLine($"Patched: {finalPath}");
+        var options = SettingsService.Load();
+        await MizService.EnableUnlimitedFuel(options.MizPath);
+        Console.WriteLine($"Patched: {options.MizPath}");
     }
 }
