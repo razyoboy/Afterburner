@@ -1,10 +1,13 @@
 # Afterburner
-DCS Unlimited Fuel (I guess)
-
 Just a little hobby project I decided to make public. Use at your own risk, and feel free to poke around or suggest improvements. No promises, and certainly no guarantees!
 
 ## What is this?
 Afterburner is a CLI utility for modifying DCS .miz mission files to enable unlimited fuel. It works by patching the relevant option inside the mission archive.
+
+## Why though?
+Sometimes you want to go full **Afterburner** (*wink wink*) or not wanting to worry about fuel management. This tool essentially does the same thing if you were to open up the in-game mission editor and tick the "Unlimited Fuel" box. 
+While this is quite easy to do once, if you play a dynamic single-player campaigns like DCS Liberation or DCS Retribution, you're dealing with a newly generated `.miz` every turn, 
+and that simple act becomes a hassle now, and this tool aims to fix that.
 
 ## How to Use
 ### Prerequisites
